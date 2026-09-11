@@ -45,8 +45,13 @@ function runBin(bin, args) {
 }
 
 function runEslint(target) {
+  // Bundles eslint-plugin-playwright AND eslint-plugin-sonarjs — Sonar's
+  // own JS/TS rule set, exposed as a real, locally-runnable ESLint plugin.
+  // This one ESLint invocation is the actual local Sonar coverage this demo
+  // exercises; sonar-project.properties is separate, for a live SonarQube/
+  // SonarCloud server in CI on top of this.
   const result = runBin('npx', ['--no-install', 'eslint', target]);
-  return { tool: 'eslint (playwright plugin)', ...result };
+  return { tool: 'eslint (playwright + sonarjs plugins)', ...result };
 }
 
 function runAstGrep(target) {

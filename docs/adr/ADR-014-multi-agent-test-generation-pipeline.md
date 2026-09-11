@@ -38,18 +38,27 @@ yet — if that changes, this is the one piece that would move.
 
 ## Validation gates
 
-- **Deterministic gate** (Phase 3, `afterFileEdit` hook): three independent
-  static tools, all blocking, no override —
-  - **ESLint** with `eslint-plugin-playwright`'s recommended rule set
+- **Deterministic gate** (Phase 3, `afterFileEdit` hook): two independent
+  tool passes, both blocking, no override —
+  - **ESLint**, bundling two plugins in one pass: `eslint-plugin-playwright`
     (`no-wait-for-timeout`, `expect-expect`, `missing-playwright-await`,
-    `no-conditional-expect`, `no-raw-locators`), scoped to `*.spec.ts` files
-    via `eslint.config.mjs`.
-  - **ast-grep**, a second, independent check for the same hardcoded-wait
+    `no-conditional-expect`, `no-raw-locators`) and `eslint-plugin-sonarjs`
+    — Sonar's own JS/TS rule set (279 rules), exposed as a real,
+    locally-runnable ESLint plugin, no server required. Scoped to
+    `*.spec.ts` via `eslint.config.mjs`.
+  - **ast-grep**, a third, independent check for the same hardcoded-wait
     pattern (`.ast-grep/rules/no-hardcoded-wait.yml`) — deliberately
-    overlapping with ESLint rather than replacing it, mirroring a real
-    multi-tool static-analysis setup where no single linter is trusted alone.
-  - **SonarQube** (`sonar-project.properties`) — wired for CI; this demo
-    doesn't run a live Sonar server, so it's config-only here.
+    overlapping with both ESLint plugins rather than replacing them,
+    mirroring a real multi-tool static-analysis setup where no single
+    linter is trusted alone. In practice, all three catch
+    `golden_dataset/dirty/dirty-01.spec.ts`'s hardcoded wait independently:
+    `playwright/no-wait-for-timeout`, `sonarjs/no-fixed-wait-in-tests`, and
+    the ast-grep rule all fire on the same line.
+  `sonar-project.properties` is separate from this: it configures a live
+  SonarQube/SonarCloud server for CI, which adds cross-run tracking and a
+  quality-gate history that a local ESLint plugin doesn't provide on its
+  own — this demo's `afterFileEdit` hook exercises the real local rule
+  coverage, not the server-side scan.
   Classified deterministic because these are syntactic/structural rule
   checks, not judgment calls. Fires automatically the moment a file lands
   in `src/tests/`, so it doesn't depend on an agent remembering to run it.

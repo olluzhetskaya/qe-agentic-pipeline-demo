@@ -48,10 +48,11 @@ mechanism, if it has one.
 
 ## Stack
 
-Playwright + TypeScript. Lint is ESLint with `eslint-plugin-playwright`
-(`eslint.config.mjs`); a second, independent structural check runs via
-ast-grep (`.ast-grep/`); SonarQube config lives at
-`sonar-project.properties` for CI.
+Playwright + TypeScript. Lint is ESLint bundling `eslint-plugin-playwright`
+and `eslint-plugin-sonarjs` (Sonar's real rule set, running locally, no
+server) in `eslint.config.mjs`; a second, independent structural check runs
+via ast-grep (`.ast-grep/`); a live SonarQube/SonarCloud server config for
+CI-level tracking lives at `sonar-project.properties`.
 
 ## Business context
 

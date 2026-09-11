@@ -20,9 +20,9 @@ with nothing to start from. This repo is that starting point.
 | Hooks | `.cursor/hooks.json` + `.cursor/hooks/*.cjs` | Real Cursor hooks — `beforeShellExecution`, `afterFileEdit`, `stop`, per [cursor.com/docs/agent/hooks](https://cursor.com/docs/agent/hooks). This is the one piece that's vendor-specific — hooks don't have a cross-tool standard yet. |
 | POM | `src/pages/` | Real Playwright TypeScript Page Objects |
 | Golden dataset | `golden_dataset/{clean,dirty}/` | Real `.spec.ts` calibration files the judge gate and the `stop` hook both check against |
-| Lint | `eslint.config.mjs` | ESLint + `eslint-plugin-playwright`, scoped to `*.spec.ts` |
+| Lint | `eslint.config.mjs` | ESLint bundling `eslint-plugin-playwright` + `eslint-plugin-sonarjs` — Sonar's real rule set, running locally |
 | Second static check | `.ast-grep/` | Independent structural rule, deliberately overlapping with ESLint |
-| Sonar | `sonar-project.properties` | Config for CI; no live server in this demo |
+| Sonar (CI) | `sonar-project.properties` | Server-side SonarQube/SonarCloud config for cross-run tracking; the rule-level Sonar coverage in this demo comes from `eslint-plugin-sonarjs` above |
 | ADR | `docs/adr/ADR-014-*.md` | The actual deliverable format the L4 module asks for |
 
 ## Setup
@@ -79,12 +79,14 @@ cat docs/draft_pr.md   # only exists if the semantic gate passed
 ```
 
 Swap in `golden_dataset/dirty/dirty-01.spec.ts` for the same steps and
-watch `after-file-edit.cjs` fail it (both ESLint's `no-wait-for-timeout` and
-the ast-grep rule catch the hardcoded wait). Then try
-`golden_dataset/dirty/dirty-02.spec.ts` — it **passes** the deterministic
-gate cleanly (nothing about a business-rule inversion is a lint error) and
-only gets caught by `stop.cjs`'s semantic check. That gap is the entire
-reason ADR-014 has two separate gates instead of one.
+watch `after-file-edit.cjs` fail it three ways at once: ESLint's
+`playwright/no-wait-for-timeout`, ESLint's `sonarjs/no-fixed-wait-in-tests`
+(a different plugin catching the same thing independently), and the
+ast-grep rule. Then try `golden_dataset/dirty/dirty-02.spec.ts` — it
+**passes all three cleanly** (nothing about a business-rule inversion is a
+static-analysis violation) and only gets caught by `stop.cjs`'s semantic
+check. That gap is the entire reason ADR-014 has two separate *kinds* of
+gate, not just more static tools.
 
 Every hook run appends to `traces/trace.jsonl`.
 
@@ -95,9 +97,9 @@ Every hook run appends to `traces/trace.jsonl`.
 | Wiki, skills, POM, golden dataset | ✅ | — |
 | Agent definitions | ✅ tool-agnostic `.md` format | The *content* they'd generate is only produced when a live agent runtime actually runs them |
 | Hooks | ✅ real Cursor hook events, real payload/response shape, verified by piping real JSON through them | — |
-| ESLint + eslint-plugin-playwright | ✅ installed and run for real | — |
+| ESLint (playwright + sonarjs plugins) | ✅ installed and run for real, 279 sonarjs rules active | — |
 | ast-grep | ✅ installed and run for real | — |
-| SonarQube | Config is real and CI-ready | No live Sonar server in this demo |
+| SonarQube (server) | Config is real and CI-ready | No live server in this demo — but the rule-level checking itself is real, via eslint-plugin-sonarjs above, not a stand-in |
 | Semantic gate | Real gate *structure*, calibrated against a real golden dataset | The judgment itself is a keyword-pattern check standing in for `code-reviewer`'s actual LLM reasoning, so the hook scripts are runnable and testable without a live agent session |
 | Tracing | ✅ real structured event log | Langfuse → local `traces/trace.jsonl`; swap the `log()` function in the hook scripts for a real client to wire up production |
 | Draft PR | ✅ enforced draft-only, for real (no `merge()` capability, no `terminal` tool, plus a shell-level block) | The PR itself is a local markdown file, not a real GitHub PR |
