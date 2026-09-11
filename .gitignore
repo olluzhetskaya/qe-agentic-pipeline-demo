@@ -1,7 +1,7 @@
-__pycache__/
-*.pyc
-.pytest_cache/
-.ruff_cache/
+node_modules/
+playwright-report/
+test-results/
 traces/*.jsonl
 docs/draft_pr.md
-src/tests/test_tenant_onboarding_generated.py
+src/tests/tenant-onboarding-generated.spec.ts
+*.tsbuildinfo

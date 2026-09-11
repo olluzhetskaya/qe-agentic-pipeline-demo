@@ -1,8 +1,0 @@
-id: no-hardcoded-sleep
-language: python
-message: >
-  Hardcoded time.sleep() found in a test file. Use Playwright's explicit
-  waits (expect(...).to_be_visible()) instead — see skills/assertion_author.
-severity: error
-rule:
-  pattern: time.sleep($ARG)
