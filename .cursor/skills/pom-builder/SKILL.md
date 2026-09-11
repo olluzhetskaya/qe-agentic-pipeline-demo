@@ -18,8 +18,8 @@ already have a Page Object in `src/pages/`.
 3. Public methods are actions or queries in business language
    (`select_benefit_plan(name)`, not `click_dropdown_item(x)`).
 4. No locator string appears outside the Page Object it belongs to — a test
-   file that contains a CSS/XPath string directly is a violation the semantic
-   gate should flag.
+   file that contains a CSS/XPath string directly is a violation the
+   code-reviewer subagent should flag.
 5. Every interaction method uses an explicit wait (`expect(...).to_be_visible()`
    or equivalent) before acting — never a bare `page.click()` with no prior wait.
 

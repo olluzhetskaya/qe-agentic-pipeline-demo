@@ -17,5 +17,4 @@ description: >
 ## Hard rule
 Never generate an XPath locator. If the only available option is XPath, flag
 it back to the ticket as "needs a `data-testid`" instead of writing brittle
-XPath — this is exactly the kind of code smell the L4 course's design-pattern
-module is meant to catch before it ships.
+XPath.

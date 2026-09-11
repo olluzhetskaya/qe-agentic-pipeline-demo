@@ -17,5 +17,5 @@ A short markdown block with three sections:
    even though gates passed (e.g. "judge-classified criterion, please confirm
    layout").
 
-This is what a human sees on the draft PR — it should be readable in under
-30 seconds, not a raw log dump.
+This is what pr-drafter puts on the draft PR — readable in under 30 seconds,
+not a raw log dump.

@@ -2,8 +2,8 @@
 name: assertion-author
 description: >
   Use when writing the assertion block of a generated test. Distinguishes a
-  real assertion from a "test that just runs" — the #1 pattern the semantic
-  gate checks for.
+  real assertion from a "test that just runs" — the #1 pattern the
+  code-reviewer subagent and the afterFileEdit hook both check for.
 ---
 
 # Skill: Assertion Author

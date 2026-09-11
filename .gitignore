@@ -1,7 +1,7 @@
 __pycache__/
 *.pyc
 .pytest_cache/
+.ruff_cache/
 traces/*.jsonl
 docs/draft_pr.md
 src/tests/test_tenant_onboarding_generated.py
-.ruff_cache/

@@ -2,14 +2,14 @@
 name: spec-writer
 description: >
   Use when turning a ticket's acceptance criteria into a structured test spec
-  (Given/When/Then) before any test code is generated. This is phase 1 output,
-  consumed by the test-generator agent.
+  (Given/When/Then) before any test code is generated. This is the
+  spec-checker subagent's output, consumed next by test-generator.
 ---
 
 # Skill: Spec Writer
 
 ## When to use
-First step in the pipeline, right after the spec-checker agent retrieves
+First step in the pipeline, right after the spec-checker subagent retrieves
 ticket + wiki context. Never skip straight to code.
 
 ## Rules this skill enforces

@@ -16,49 +16,69 @@ a scripted workflow.
 
 ## Decision — Pipeline design
 
-| Phase | Component | Tool & skill access | Output |
+Built entirely on Cursor's native primitives — no custom orchestrator script.
+Cursor's own agent is the orchestrator; it delegates to four subagents, in
+order, and two hooks fire automatically around them.
+
+| Phase | Component | Location | Output |
 |---|---|---|---|
-| 1. Context grounding | `spec_checker` agent | Ticket data, business-domain wiki | Structured acceptance criteria + wiki grounding |
-| 2. Test generation | `test_generator` agent | Skills: pom_builder, spec_writer, locator_strategy, assertion_author | Draft `.py` test file + POM usage |
-| 3. Static validation | `static_checks` gate | ruff (lint), ast-grep, Sonar | PASS/FAIL, blocking |
-| 4. Semantic validation | `code_reviewer` agent | Generated diff + wiki context + golden dataset | Judge verdict + findings |
-| 5. PR + trace | `pr_agent` | Local FS (draft only — no merge capability), trace hook | Draft PR + full execution trace |
+| 1. Context grounding | `@spec-checker` subagent | `.cursor/agents/spec-checker.md` | Structured acceptance criteria + wiki grounding |
+| 2. Test generation | `@test-generator` subagent | `.cursor/agents/test-generator.md`, applying `.cursor/skills/{pom-builder,spec-writer,locator-strategy,assertion-author}` | Draft `.py` test file + POM usage |
+| 3. Static validation | `afterFileEdit` hook | `.cursor/hooks/after_file_edit.py` (ruff, ast-grep) | PASS/FAIL, blocking, runs automatically on write |
+| 4. Semantic validation | `@code-reviewer` subagent | `.cursor/agents/code-reviewer.md` | Judge verdict + findings |
+| 5. PR + trace | `@pr-drafter` subagent + `stop` hook | `.cursor/agents/pr-drafter.md`, `.cursor/hooks/stop.py` | Draft PR (`docs/draft_pr.md`) + full trace |
 
 ## Validation gates
 
-- **Deterministic gate** (Phase 3): lint, ast-grep, and Sonar must all pass.
-  Zero-tolerance, blocking, no override — classified deterministic because
-  it's a syntactic/structural rule check, not a judgment call.
-- **Judge gate** (Phase 4): scores the generated test against a clean/dirty
-  golden dataset (`golden_dataset/clean/`, `golden_dataset/dirty/`),
-  checking correctness and alignment with the business-domain wiki — not
-  "does it compile," but "is this testing the right thing." Classified
-  judge because the verdict requires quality judgment a static rule can't
-  express (see `golden_dataset/dirty/dirty_02.py` — syntactically perfect,
-  semantically inverts a business rule).
+- **Deterministic gate** (Phase 3, `afterFileEdit` hook): lint (ruff) and
+  ast-grep must both pass. Zero-tolerance, blocking, no override —
+  classified deterministic because it's a syntactic/structural rule check,
+  not a judgment call. Fires automatically the moment a file lands in
+  `src/tests/`, so it doesn't depend on a subagent remembering to run it.
+- **Judge gate** (Phase 4, `@code-reviewer` + re-checked by the `stop` hook):
+  scores the generated test against a clean/dirty golden dataset
+  (`golden_dataset/clean/`, `golden_dataset/dirty/`), checking correctness
+  and alignment with the business-domain wiki — not "does it compile," but
+  "is this testing the right thing." Classified judge because the verdict
+  requires quality judgment a static rule can't express. Proven in practice:
+  `golden_dataset/dirty/dirty_01.py`'s hardcoded `time.sleep()` passes ruff
+  cleanly but fails the semantic check — exactly why both gates exist, not
+  just one.
 
 ## Human intervention points
 
-- Output is draft-PR-only. `pr_agent.py` has no `merge()` method at all —
-  the boundary is the absence of a capability, not a written instruction.
-  `pipeline/hooks/enforcement.py` adds an explicit check on top as a second
-  line of defense.
-- Anything touching payroll- or PII-adjacent test paths routes to mandatory
-  manual review regardless of gate result (`enforce_pii_path_review`).
+- Output is draft-PR-only. `@pr-drafter`'s frontmatter sets
+  `disallowedTools: terminal` — the subagent has no shell access, so a
+  merge command isn't a capability it has, not just an instruction it's
+  told to avoid.
+- `.cursor/hooks/before_shell_execution.py` (`beforeShellExecution` hook) is
+  a second, independent line of defense: it pattern-matches and blocks
+  `git merge`, `git push ... main/master`, and `gh pr merge` for *any*
+  agent or subagent that attempts them, regardless of tool configuration.
+  This is the advisory-vs-enforcement distinction the L4 course draws —
+  one is a missing capability, the other is a runtime block; both are
+  present here on purpose.
+- Anything touching payroll- or PII-adjacent test paths
+  (`src/pages/payroll`, `src/tests/payroll`, `src/tests/pii`) is flagged by
+  `after_file_edit.py` for mandatory manual review regardless of gate
+  result.
 
 ## Observability
 
-Every phase and every hook logs to `traces/trace.jsonl` (stands in for
-Langfuse in this demo — see `pipeline/hooks/trace_hook.py`). A human can
-reconstruct exactly what happened in a run without having watched it live —
-this is what makes Phase 4's async review discipline possible at all.
+Every hook appends to `traces/trace.jsonl` — this stands in for Langfuse
+(or any tracing backend) in this demo; swap the `log()` function in
+`.cursor/hooks/after_file_edit.py` and `stop.py` for a real Langfuse client
+call to wire it up for production. A human can reconstruct exactly what
+happened in a session without having watched it live — this is what makes
+the L3 course's async review discipline possible applied to a pipeline
+instead of a single task.
 
 ## Economics
 
 ~40 token-equivalent-minutes per generated spec vs. ~35 minutes of manual
 authoring. Net positive only after the golden dataset stabilized — the
-first two calibration cycles ran at breakeven while `code_reviewer`'s
-pattern set was being tuned against real dirty examples.
+first two calibration cycles ran at breakeven while `code-reviewer`'s
+judgment was being tuned against real dirty examples.
 
 ## Consequences
 
