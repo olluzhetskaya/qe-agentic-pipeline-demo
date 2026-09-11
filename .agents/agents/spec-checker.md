@@ -27,6 +27,13 @@ When invoked:
 Do not write any test code yourself. If the ticket is too vague to classify
 a criterion, say so and ask for clarification instead of guessing.
 
+**Relationship to Stage 0:** `data/ticket.json`'s acceptance criteria and
+`data/test-design.json`'s manual test cases (from `test-designer`) describe
+the same underlying behavior at two different levels — don't treat them as
+unrelated. If a criterion here doesn't map to any test case there (or vice
+versa), that's usually a sign one of the two artifacts drifted from the
+actual requirement; flag it rather than silently reconciling them yourself.
+
 This file is placed under `.agents/agents/` (not a tool-specific directory)
 so it's readable by any agent runtime that supports the shared Agent Skills
 / subagent conventions — Cursor, Claude Code, Codex, etc. — not just one

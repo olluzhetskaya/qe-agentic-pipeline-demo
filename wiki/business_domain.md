@@ -29,8 +29,8 @@ not a full requirements doc.
 
 ## Why this file exists
 
-The multi-agent pipeline in `pipeline/` retrieves this file (or a chunk of it)
-before generating or reviewing a test. It's what lets the semantic/judge gate
-in `pipeline/agents/code_reviewer.py` catch a test that is *syntactically*
-fine but *semantically* wrong — e.g., a test that passes but checks a rule
-that doesn't reflect rule #1 above.
+The `code-reviewer` agent (`.agents/agents/code-reviewer.md`) retrieves this
+file (or a chunk of it) before reviewing a generated test. It's what lets
+the semantic/judge gate catch a test that is *syntactically* fine but
+*semantically* wrong — e.g., a test that passes but checks a rule that
+doesn't reflect rule #1 above.
