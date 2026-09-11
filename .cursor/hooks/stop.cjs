@@ -24,12 +24,34 @@ const DRAFT_PR = path.join(REPO_ROOT, 'docs', 'draft_pr.md');
 
 // Same seeded patterns as golden_dataset/dirty/*.spec.ts — kept in sync so
 // this independent check and code-reviewer's judgment are calibrated the
-// same way.
+// same way. Two different failure classes on purpose: dirty-01/dirty-03 are
+// things static analysis could also catch (belt-and-suspenders); the
+// isFinishEnabled/toBeEnabled-before-selection check is the one finding
+// static analysis structurally cannot make — dirty-02 passes ESLint,
+// sonarjs, and ast-grep cleanly and only this semantic check catches it.
 const VIOLATION_PATTERNS = {
   'page.waitForTimeout(': 'Hardcoded wait instead of an explicit Playwright wait.',
   'expect(page.url()).toBeTruthy()': 'Not a real assertion tied to an acceptance criterion.',
-  'isFinishEnabled()).toBe(true)': 'Possible inversion of business rule 1 (submission gating) — cross-check wiki.',
+  'expect(isEnabled).toBe(true)': 'Raw locator + boolean assertion instead of a web-first matcher (see dirty-03).',
 };
+
+// The business-rule-inversion case (dirty-02) can't be keyword-matched the
+// way the others can: `await expect(onboarding.finishButton).toBeEnabled();`
+// is *correct code* — it's only wrong given the ticket says Finish must be
+// disabled until a plan is selected, and this test calls it with no prior
+// selectBenefitPlan() step. A real code-reviewer session (or a human) would
+// read wiki/business_domain.md and data/ticket.json alongside the diff to
+// see the missing step. This demo's stop hook checks for exactly that
+// missing precondition instead of a text pattern:
+function checkForMissingPreconditionBeforeFinishAssertion(code) {
+  const assertsFinish = /await expect\([^)]*finishButton\)\.toBeEnabled\(\)/.test(code);
+  const selectsPlanFirst = /selectBenefitPlan\(/.test(code);
+  if (assertsFinish && !selectsPlanFirst) {
+    return 'Asserts Finish is enabled with no prior selectBenefitPlan() call — ' +
+      'likely inverts business rule 1 (submission gating). Cross-check wiki/business_domain.md.';
+  }
+  return null;
+}
 
 function log(eventType, detail) {
   fs.mkdirSync(path.dirname(TRACE_FILE), { recursive: true });
@@ -68,6 +90,12 @@ async function main() {
   const findings = Object.entries(VIOLATION_PATTERNS)
     .filter(([pattern]) => code.includes(pattern))
     .map(([, message]) => message);
+
+  const preconditionFinding = checkForMissingPreconditionBeforeFinishAssertion(code);
+  if (preconditionFinding) {
+    findings.push(preconditionFinding);
+  }
+
   const verdict = findings.length > 0 ? 'FAIL' : 'PASS';
 
   log('gate_result', { phase: 'semantic_review', verdict, findings });

@@ -1,0 +1,7 @@
+{
+  "id": "KB-4821",
+  "type": "Story",
+  "title": "Employees must select a benefit plan before completing onboarding",
+  "description": "As an Employee, I want the onboarding wizard to require a benefit plan selection before I can finish, so that I don't accidentally skip enrollment and end up without coverage.",
+  "raw_notes": "Came out of the Growth-tier tenant pilot; two employees at Acme Corp completed onboarding without benefits selected because Finish was clickable early. Needs to be blocked in the UI, not just server-side validated."
+}

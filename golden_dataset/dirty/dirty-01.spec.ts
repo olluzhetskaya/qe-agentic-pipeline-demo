@@ -5,10 +5,10 @@ import { OnboardingPage } from '@pages/onboarding-page';
 // (page.waitForTimeout instead of an explicit wait, plus an assertion that
 // isn't tied to any acceptance criterion).
 //
-// This should score FAIL on the semantic gate even though it "runs" — and,
-// on purpose, it also demonstrates why lint alone isn't enough: without
-// eslint-plugin-playwright's no-wait-for-timeout rule enabled, this file
-// would pass static analysis cleanly while still being a bad test.
+// Caught three independent ways: playwright/no-wait-for-timeout,
+// sonarjs/no-fixed-wait-in-tests, and the ast-grep rule all fire on the
+// same line — proof that overlapping static tools aren't redundant, they're
+// three chances to catch the same real mistake.
 
 test('finish button bad pattern', async ({ page }) => {
   const onboarding = new OnboardingPage(page);
