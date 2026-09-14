@@ -1,0 +1,15 @@
+{
+  "requirement_id": "KB-4821",
+  "stage": "0c_design",
+  "updated_at": "2026-09-13T00:00:00.000Z",
+  "stages": {
+    "0a_requirements": "pass",
+    "0b_objectives": "pass",
+    "0c_design": "pass",
+    "0d_design_review": "pending",
+    "0e_xray_publish": "pending",
+    "1a_generation": "pending",
+    "1b_code_review": "pending",
+    "1c_pr_draft": "pending"
+  }
+}

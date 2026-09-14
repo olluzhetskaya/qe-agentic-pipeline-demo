@@ -3,5 +3,47 @@
   "type": "Story",
   "title": "Employees must select a benefit plan before completing onboarding",
   "description": "As an Employee, I want the onboarding wizard to require a benefit plan selection before I can finish, so that I don't accidentally skip enrollment and end up without coverage.",
-  "raw_notes": "Came out of the Growth-tier tenant pilot; two employees at Acme Corp completed onboarding without benefits selected because Finish was clickable early. Needs to be blocked in the UI, not just server-side validated."
+  "raw_notes": "Came out of the Growth-tier tenant pilot; two employees at Acme Corp completed onboarding without benefits selected because Finish was clickable early. Needs to be blocked in the UI, not just server-side validated.",
+  "analysis_confidence": {
+    "score": 96,
+    "threshold": 75,
+    "threshold_basis": "policy",
+    "rationale": "AC-1 through AC-3 have explicit observable outcomes and matching wiki rules; AC-4 is explicitly classified out of functional automation scope."
+  },
+  "analysis_decision": {
+    "status": "AUTO_PROCEED",
+    "reason": null,
+    "escalate": null
+  },
+  "acceptance_criteria": [
+    {
+      "id": "AC-1",
+      "text": "Given an Employee mid-onboarding with no BenefitPlan selected, when they view the wizard, then the Finish button is disabled.",
+      "type": "deterministic",
+      "grade": "PASS",
+      "confidence": 99
+    },
+    {
+      "id": "AC-2",
+      "text": "Given an Employee selects a BenefitPlan belonging to their own Tenant, when the selection completes, then the Finish button becomes enabled.",
+      "type": "deterministic",
+      "grade": "PASS",
+      "confidence": 98
+    },
+    {
+      "id": "AC-3",
+      "text": "Given a Growth-tier Tenant, when the Employee opens the plan dropdown, then only BenefitPlans belonging to that Tenant are listed (no cross-tenant leakage).",
+      "type": "deterministic",
+      "grade": "PASS",
+      "confidence": 99
+    },
+    {
+      "id": "AC-4",
+      "text": "Given the wizard is fully filled out, when the Employee views the summary screen, then the layout reads clearly and matches the approved Figma design.",
+      "type": "judge",
+      "grade": "SKIP",
+      "confidence": 94
+    }
+  ],
+  "wiki_refs": ["submission-gating", "tenant-isolation", "plan-tier-limits"]
 }

@@ -1,0 +1,310 @@
+{
+  "generated_at": "2026-09-13T09:00:08.890Z",
+  "read_only": true,
+  "sources": {
+    "requirement": "data/requirement.json",
+    "design": "data/test-design.json",
+    "wiki": "wiki/"
+  },
+  "gates": [
+    {
+      "direction": "config",
+      "pass": true,
+      "findings": []
+    },
+    {
+      "direction": "design",
+      "pass": true,
+      "findings": []
+    },
+    {
+      "direction": "data",
+      "pass": true,
+      "findings": []
+    },
+    {
+      "direction": "quality",
+      "pass": true,
+      "findings": []
+    }
+  ],
+  "requirement": {
+    "id": "KB-4821",
+    "type": "Story",
+    "title": "Employees must select a benefit plan before completing onboarding",
+    "description": "As an Employee, I want the onboarding wizard to require a benefit plan selection before I can finish, so that I don't accidentally skip enrollment and end up without coverage.",
+    "raw_notes": "Came out of the Growth-tier tenant pilot; two employees at Acme Corp completed onboarding without benefits selected because Finish was clickable early. Needs to be blocked in the UI, not just server-side validated.",
+    "analysis_confidence": {
+      "score": 96,
+      "rationale": "AC-1 through AC-3 have explicit observable outcomes and matching wiki rules; AC-4 is explicitly classified out of functional automation scope."
+    },
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "Given an Employee mid-onboarding with no BenefitPlan selected, when they view the wizard, then the Finish button is disabled.",
+        "type": "deterministic",
+        "grade": "PASS",
+        "confidence": 99
+      },
+      {
+        "id": "AC-2",
+        "text": "Given an Employee selects a BenefitPlan belonging to their own Tenant, when the selection completes, then the Finish button becomes enabled.",
+        "type": "deterministic",
+        "grade": "PASS",
+        "confidence": 98
+      },
+      {
+        "id": "AC-3",
+        "text": "Given a Growth-tier Tenant, when the Employee opens the plan dropdown, then only BenefitPlans belonging to that Tenant are listed (no cross-tenant leakage).",
+        "type": "deterministic",
+        "grade": "PASS",
+        "confidence": 99
+      },
+      {
+        "id": "AC-4",
+        "text": "Given the wizard is fully filled out, when the Employee views the summary screen, then the layout reads clearly and matches the approved Figma design.",
+        "type": "judge",
+        "grade": "SKIP",
+        "confidence": 94
+      }
+    ],
+    "wiki_refs": [
+      "submission-gating",
+      "tenant-isolation",
+      "plan-tier-limits"
+    ]
+  },
+  "design": {
+    "requirement_id": "KB-4821",
+    "project_key": "KB",
+    "test_objectives": [
+      {
+        "id": "OBJ-1",
+        "name": "Employee cannot complete onboarding without selecting a BenefitPlan",
+        "requirement_id": "KB-4821",
+        "covers_ac": [
+          "AC-1",
+          "AC-2"
+        ],
+        "wiki_rule": "submission-gating",
+        "automation_candidacy": "Automate",
+        "notes": ""
+      },
+      {
+        "id": "OBJ-2",
+        "name": "Plan dropdown shows only BenefitPlans that belong to the Employee's Tenant",
+        "requirement_id": "KB-4821",
+        "covers_ac": [
+          "AC-3"
+        ],
+        "wiki_rule": "tenant-isolation",
+        "automation_candidacy": "Automate",
+        "notes": ""
+      }
+    ],
+    "test_cases": [
+      {
+        "id": "TC-1",
+        "title": "Verify Finish stays disabled when no benefit plan is selected",
+        "priority": "High",
+        "test_type": "Manual",
+        "linked_objective": "OBJ-1",
+        "covers_ac": [
+          "AC-1"
+        ],
+        "requirement_id": "KB-4821",
+        "technique": [
+          "State Transition",
+          "Error Guessing"
+        ],
+        "automation_status": "Automated",
+        "automated_by": "golden_dataset/clean/clean-01.spec.ts",
+        "xray_key": null,
+        "preconditions": [
+          "Employee mid-onboarding (Employees.midOnboarding)",
+          "No BenefitPlan selected"
+        ],
+        "steps": [
+          {
+            "action": "Open the onboarding wizard",
+            "data": "-",
+            "result": "Wizard loads with the plan-selection step visible"
+          },
+          {
+            "action": "Attempt to click Finish",
+            "data": "-",
+            "result": "Finish is disabled and cannot be clicked"
+          }
+        ]
+      },
+      {
+        "id": "TC-2",
+        "title": "Verify Finish becomes enabled after a tenant plan is selected",
+        "priority": "High",
+        "test_type": "Manual",
+        "linked_objective": "OBJ-1",
+        "covers_ac": [
+          "AC-2"
+        ],
+        "requirement_id": "KB-4821",
+        "technique": [
+          "State Transition"
+        ],
+        "automation_status": "Automated",
+        "automated_by": "src/tests/tenant-onboarding.spec.ts",
+        "xray_key": null,
+        "preconditions": [
+          "Employee mid-onboarding (Employees.midOnboarding)"
+        ],
+        "steps": [
+          {
+            "action": "Select a BenefitPlan from the dropdown",
+            "data": "Tenants.growth01.defaultPlanLabel",
+            "result": "Plan is selected and the dropdown closes"
+          },
+          {
+            "action": "Click Finish",
+            "data": "-",
+            "result": "Finish is enabled and onboarding proceeds"
+          }
+        ]
+      },
+      {
+        "id": "TC-3",
+        "title": "Verify no cross-tenant BenefitPlan is visible in the dropdown",
+        "priority": "Critical",
+        "test_type": "Manual",
+        "linked_objective": "OBJ-2",
+        "covers_ac": [
+          "AC-3"
+        ],
+        "requirement_id": "KB-4821",
+        "technique": [
+          "Equivalence Partitioning",
+          "Error Guessing"
+        ],
+        "automation_status": "Automated",
+        "automated_by": "golden_dataset/clean/clean-02.spec.ts",
+        "xray_key": null,
+        "preconditions": [
+          "Tenants.growth01 — Growth-tier Tenant A with its own BenefitPlans",
+          "Tenants.growth02 — a second Tenant B with different plans"
+        ],
+        "steps": [
+          {
+            "action": "Open the plan-selection dropdown as an Employee of Tenant A",
+            "data": "Tenants.growth01.id",
+            "result": "Only Tenant A's plans are listed — none from Tenant B"
+          }
+        ]
+      }
+    ]
+  },
+  "wiki": {
+    "rules": [
+      {
+        "slug": "submission-gating",
+        "file": "wiki/business_domain.md",
+        "techniques": [
+          "State Transition",
+          "Error Guessing"
+        ],
+        "failure_modes": [
+          "disabled",
+          "cannot be clicked"
+        ],
+        "assertion": {
+          "locator": "finishButton",
+          "matcher": "toBeEnabled",
+          "requires": "selectBenefitPlan"
+        }
+      },
+      {
+        "slug": "tenant-isolation",
+        "file": "wiki/business_domain.md",
+        "techniques": [
+          "Equivalence Partitioning",
+          "Error Guessing"
+        ],
+        "failure_modes": [
+          "absent",
+          "not listed",
+          "not visible",
+          "none from",
+          "cross-tenant",
+          "other tenant",
+          "tenant b"
+        ],
+        "assertion": null
+      },
+      {
+        "slug": "plan-tier-limits",
+        "file": "wiki/business_domain.md",
+        "techniques": [
+          "Boundary Value Analysis"
+        ],
+        "failure_modes": [
+          "exactly one",
+          "cannot add",
+          "second plan",
+          "toHaveCount(1)",
+          "more than one"
+        ],
+        "assertion": null
+      }
+    ],
+    "sensitive_domains": [
+      "payroll",
+      "pii"
+    ],
+    "findings": []
+  },
+  "fixture_resolutions": [
+    {
+      "handle": "Employees.midOnboarding",
+      "found": true,
+      "value": {
+        "id": "emp-001",
+        "tenantId": "tenant-growth-01",
+        "onboardingStatus": "profile_complete"
+      }
+    },
+    {
+      "handle": "Tenants.growth01",
+      "found": true,
+      "value": {
+        "id": "tenant-growth-01",
+        "planTier": "Growth",
+        "planLabels": [
+          "Dental",
+          "Vision"
+        ],
+        "defaultPlanLabel": "Dental"
+      }
+    },
+    {
+      "handle": "Tenants.growth01.defaultPlanLabel",
+      "found": true,
+      "value": "Dental"
+    },
+    {
+      "handle": "Tenants.growth01.id",
+      "found": true,
+      "value": "tenant-growth-01"
+    },
+    {
+      "handle": "Tenants.growth02",
+      "found": true,
+      "value": {
+        "id": "tenant-growth-02",
+        "planTier": "Growth",
+        "planLabels": [
+          "Medical",
+          "Dental",
+          "Vision"
+        ],
+        "defaultPlanLabel": "Medical"
+      }
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "algorithm": "sha256",
+  "tracks": [
+    "src/validation",
+    "src/observability"
+  ],
+  "digest": "3ac6a6234094fab6be99c3a80d68c76e93877194fe419a3fdf12c7f6d686beb6"
+}

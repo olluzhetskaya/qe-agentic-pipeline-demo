@@ -1,14 +1,19 @@
-import { test, expect } from '@playwright/test';
-import { OnboardingPage } from '@pages/onboarding-page';
+import { test, expect, Tags } from '@fixtures';
 
 // GOLDEN: clean-01 — Finish button disabled before plan selection (AC-1).
-// Why this is 'clean': asserts directly on the Locator with a web-first
-// matcher (toBeDisabled), which auto-retries — never a boolean snapshot
-// via a wrapper method. No waitForTimeout. No raw locator outside the POM.
+// Why this is 'clean':
+//   - test.describe wraps the test with a tag annotation (Tags.*)
+//   - test.step names each phase for Playwright's trace/HTML report
+//   - gotoWizard() not goto('/...') — URL lives in OnboardingPage.PATH
+//   - Web-first assertion on the Locator; no boolean snapshot, no wait
 
-test('finish button disabled before plan selection', async ({ page }) => {
-  const onboarding = new OnboardingPage(page);
-  await onboarding.goto('/onboarding/wizard');
-
-  await expect(onboarding.finishButton).toBeDisabled();
+test.describe('Submission gating', { tag: [Tags.smoke, Tags.onboarding] }, () => {
+  test('finish button disabled before plan selection', async ({ onboarding }) => {
+    await test.step('Navigate to wizard', async () => {
+      await onboarding.gotoWizard();
+    });
+    await test.step('Assert Finish is disabled', async () => {
+      await expect(onboarding.finishButton).toBeDisabled();
+    });
+  });
 });

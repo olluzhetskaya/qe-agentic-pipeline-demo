@@ -2,20 +2,43 @@
   "requirement_id": "KB-4821",
   "project_key": "KB",
   "test_objectives": [
-    "Verify the Finish action cannot be completed until a benefit plan is selected",
-    "Verify plan visibility respects tenant boundaries",
-    "Verify Starter-tier plan-count limit is enforced"
+    {
+      "id": "OBJ-1",
+      "name": "Employee cannot complete onboarding without selecting a BenefitPlan",
+      "requirement_id": "KB-4821",
+      "covers_ac": ["AC-1", "AC-2"],
+      "wiki_rule": "submission-gating",
+      "automation_candidacy": "Automate",
+      "notes": null
+    },
+    {
+      "id": "OBJ-2",
+      "name": "Plan dropdown shows only BenefitPlans that belong to the Employee's Tenant",
+      "requirement_id": "KB-4821",
+      "covers_ac": ["AC-3"],
+      "wiki_rule": "tenant-isolation",
+      "automation_candidacy": "Automate",
+      "notes": null
+    }
   ],
   "test_cases": [
     {
       "id": "TC-1",
-      "summary": "Finish button disabled before plan selection",
+      "title": "Verify Finish stays disabled when no benefit plan is selected",
       "priority": "High",
       "test_type": "Manual",
-      "linked_objective": "Verify the Finish action cannot be completed until a benefit plan is selected",
-      "automation_status": "Automated",
-      "automated_by": "golden_dataset/clean/clean-01.spec.ts",
-      "preconditions": ["Employee mid-onboarding", "No BenefitPlan selected"],
+      "linked_objective": "OBJ-1",
+      "covers_ac": ["AC-1"],
+      "ac_text": [
+        "Given an Employee mid-onboarding with no BenefitPlan selected, when they view the wizard, then the Finish button is disabled."
+      ],
+      "requirement_id": "KB-4821",
+      "technique": ["State Transition", "Error Guessing"],
+      "automation_status": "Not yet automated",
+      "automated_by": null,
+      "notes": "No produced spec under src/tests/ yet. golden_dataset/clean is reviewer calibration, not traceability.",
+      "xray_key": null,
+      "preconditions": ["Employee mid-onboarding (Employees.midOnboarding)", "No BenefitPlan selected"],
       "steps": [
         { "action": "Open the onboarding wizard", "data": "-", "result": "Wizard loads with the plan-selection step visible" },
         { "action": "Attempt to click Finish", "data": "-", "result": "Finish is disabled and cannot be clicked" }
@@ -23,42 +46,47 @@
     },
     {
       "id": "TC-2",
-      "summary": "Finish button enabled after plan selection",
+      "title": "Verify Finish becomes enabled after a tenant plan is selected",
       "priority": "High",
       "test_type": "Manual",
-      "linked_objective": "Verify the Finish action cannot be completed until a benefit plan is selected",
+      "linked_objective": "OBJ-1",
+      "covers_ac": ["AC-2"],
+      "ac_text": [
+        "Given an Employee selects a BenefitPlan belonging to their own Tenant, when the selection completes, then the Finish button becomes enabled."
+      ],
+      "requirement_id": "KB-4821",
+      "technique": ["State Transition"],
       "automation_status": "Automated",
       "automated_by": "src/tests/tenant-onboarding.spec.ts",
-      "preconditions": ["Employee mid-onboarding"],
+      "xray_key": null,
+      "preconditions": ["Employee mid-onboarding (Employees.midOnboarding)"],
       "steps": [
-        { "action": "Select a BenefitPlan from the dropdown", "data": "Dental", "result": "Plan is selected and the dropdown closes" },
+        { "action": "Select a BenefitPlan from the dropdown", "data": "Tenants.growth01.defaultPlanLabel", "result": "Plan is selected and the dropdown closes" },
         { "action": "Click Finish", "data": "-", "result": "Finish is enabled and onboarding proceeds" }
       ]
     },
     {
       "id": "TC-3",
-      "summary": "No cross-tenant BenefitPlan visible in dropdown",
+      "title": "Verify no cross-tenant BenefitPlan is visible in the dropdown",
       "priority": "Critical",
       "test_type": "Manual",
-      "linked_objective": "Verify plan visibility respects tenant boundaries",
-      "automation_status": "Automated",
-      "automated_by": "golden_dataset/clean/clean-02.spec.ts",
-      "preconditions": ["Growth-tier Tenant A with its own BenefitPlans", "A second Tenant B exists with different plans"],
-      "steps": [
-        { "action": "Open the plan-selection dropdown as an Employee of Tenant A", "data": "-", "result": "Only Tenant A's plans are listed — none from Tenant B" }
-      ]
-    },
-    {
-      "id": "TC-4",
-      "summary": "Starter-tier tenant cannot offer more than one BenefitPlan",
-      "priority": "Medium",
-      "test_type": "Manual",
-      "linked_objective": "Verify Starter-tier plan-count limit is enforced",
+      "linked_objective": "OBJ-2",
+      "covers_ac": ["AC-3"],
+      "ac_text": [
+        "Given a Growth-tier Tenant, when the Employee opens the plan dropdown, then only BenefitPlans belonging to that Tenant are listed (no cross-tenant leakage)."
+      ],
+      "requirement_id": "KB-4821",
+      "technique": ["Equivalence Partitioning", "Error Guessing"],
       "automation_status": "Not yet automated",
       "automated_by": null,
-      "preconditions": ["Starter-tier Tenant with exactly one BenefitPlan configured"],
+      "notes": "No produced spec under src/tests/ yet. golden_dataset/clean is reviewer calibration, not traceability.",
+      "xray_key": null,
+      "preconditions": [
+        "Tenants.growth01 — Growth-tier Tenant A with its own BenefitPlans",
+        "Tenants.growth02 — a second Tenant B with different plans"
+      ],
       "steps": [
-        { "action": "Attempt to add a second BenefitPlan to the Starter-tier Tenant", "data": "-", "result": "System rejects the addition with a tier-limit error" }
+        { "action": "Open the plan-selection dropdown as an Employee of Tenant A", "data": "Tenants.growth01.id", "result": "Only Tenant A's plans are listed — none from Tenant B" }
       ]
     }
   ]

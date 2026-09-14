@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 740" width="1280" height="740" role="img" aria-labelledby="title desc">
+  <title id="title">QE requirement-to-automation pipeline</title>
+  <desc id="desc">Stage 0 turns a Jira story into Xray cases via skills, a judge agent, and human gates. Stage 1 generates Playwright code from the test-design artifact, then static, judge, and draft-PR gates.</desc>
+  <rect width="1280" height="740" fill="#f8fafc"/>
+  <text x="40" y="36" font-family="ui-sans-serif, system-ui, sans-serif" font-size="22" font-weight="700" fill="#0f172a">Requirement-to-automation pipeline</text>
+  <text x="40" y="58" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" fill="#475569">Coordinator applies skills in one chat. Isolated agents are judges and write sinks only.</text>
+
+  <!-- legend -->
+  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#334155">
+    <rect x="780" y="22" width="14" height="14" rx="2" fill="#dbeafe" stroke="#1d4ed8"/>
+    <text x="800" y="33">Skill (main session)</text>
+    <rect x="940" y="22" width="14" height="14" rx="2" fill="#ede9fe" stroke="#6d28d9"/>
+    <text x="960" y="33">Isolated agent</text>
+    <rect x="1070" y="22" width="14" height="14" rx="2" fill="#ffedd5" stroke="#c2410c"/>
+    <text x="1090" y="33">Human gate</text>
+  </g>
+
+  <!-- Stage 0 band -->
+  <rect x="24" y="76" width="1232" height="310" rx="10" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="40" y="104" font-family="ui-sans-serif, system-ui, sans-serif" font-size="14" font-weight="700" fill="#1e3a8a">STAGE 0  manual: Jira Story ? Xray</text>
+
+  <g font-family="ui-sans-serif, system-ui, sans-serif">
+    <!-- nodes row 1 -->
+    <rect x="40" y="128" width="170" height="72" rx="6" fill="#f1f5f9" stroke="#64748b"/>
+    <text x="125" y="158" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">Jira Story</text>
+    <text x="125" y="178" text-anchor="middle" font-size="10" fill="#64748b">data/requirement.json</text>
+
+    <rect x="250" y="128" width="190" height="72" rx="6" fill="#dbeafe" stroke="#1d4ed8"/>
+    <text x="345" y="154" text-anchor="middle" font-size="12" font-weight="600" fill="#1e3a8a">requirements-analysis</text>
+    <text x="345" y="174" text-anchor="middle" font-size="10" fill="#1e40af">acli ? AC grades ? wiki</text>
+    <text x="345" y="190" text-anchor="middle" font-size="10" fill="#c2410c">gate if AC FAIL / new rule</text>
+
+    <rect x="480" y="128" width="170" height="72" rx="6" fill="#dbeafe" stroke="#1d4ed8"/>
+    <text x="565" y="158" text-anchor="middle" font-size="12" font-weight="600" fill="#1e3a8a">test-objectives</text>
+    <text x="565" y="178" text-anchor="middle" font-size="10" fill="#1e40af">one objective per wiki rule</text>
+    <text x="565" y="190" text-anchor="middle" font-size="10" fill="#c2410c">human go-ahead always</text>
+
+    <rect x="690" y="128" width="170" height="72" rx="6" fill="#dbeafe" stroke="#1d4ed8"/>
+    <text x="775" y="154" text-anchor="middle" font-size="12" font-weight="600" fill="#1e3a8a">test-case-design</text>
+    <text x="775" y="174" text-anchor="middle" font-size="10" fill="#1e40af">EP / BVA / DT / ST / EG</text>
+    <text x="775" y="190" text-anchor="middle" font-size="10" fill="#475569">afterFileEdit on JSON</text>
+
+    <rect x="900" y="128" width="190" height="72" rx="6" fill="#ede9fe" stroke="#6d28d9"/>
+    <text x="995" y="154" text-anchor="middle" font-size="12" font-weight="600" fill="#5b21b6">test-design-reviewer</text>
+    <text x="995" y="174" text-anchor="middle" font-size="10" fill="#6d28d9">isolated judge</text>
+    <text x="995" y="190" text-anchor="middle" font-size="10" fill="#475569">PASS summary ? human</text>
+
+    <rect x="1110" y="128" width="126" height="72" rx="6" fill="#ede9fe" stroke="#6d28d9"/>
+    <text x="1173" y="158" text-anchor="middle" font-size="11" font-weight="600" fill="#5b21b6">xray-publisher</text>
+    <text x="1173" y="178" text-anchor="middle" font-size="10" fill="#6d28d9">MCP writes</text>
+    <text x="1173" y="190" text-anchor="middle" font-size="10" fill="#c2410c">confirm / issue</text>
+
+    <!-- arrows row 1 -->
+    <g fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)">
+      <line x1="210" y1="164" x2="246" y2="164"/>
+      <line x1="440" y1="164" x2="476" y2="164"/>
+      <line x1="650" y1="164" x2="686" y2="164"/>
+      <line x1="860" y1="164" x2="896" y2="164"/>
+      <line x1="1090" y1="164" x2="1106" y2="164"/>
+    </g>
+    <!-- fail back -->
+    <path d="M995 200 C995 250 775 250 775 200" fill="none" stroke="#c2410c" stroke-width="1.25" stroke-dasharray="5 4" marker-end="url(#arrow-fail)"/>
+    <text x="885" y="244" font-size="10" fill="#c2410c">FAIL ? redesign</text>
+  </g>
+
+  <text x="40" y="268" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="600" fill="#334155">Deterministic + human checkpoints</text>
+  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="11">
+    <rect x="40" y="280" width="280" height="82" rx="6" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text x="54" y="304" font-weight="600" fill="#0f172a">wiki-lint + AC grades</text>
+    <text x="54" y="322" fill="#475569">AUTO-PROCEED if clean</text>
+    <text x="54" y="340" fill="#c2410c">WAITING if FAIL / ambiguity</text>
+
+    <rect x="340" y="280" width="280" height="82" rx="6" fill="#ffedd5" stroke="#c2410c"/>
+    <text x="354" y="304" font-weight="600" fill="#9a3412">Human: objectives</text>
+    <text x="354" y="322" fill="#9a3412">Always stop. Wrong objectives</text>
+    <text x="354" y="340" fill="#9a3412">force every case to be rewritten.</text>
+
+    <rect x="640" y="280" width="280" height="82" rx="6" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text x="654" y="304" font-weight="600" fill="#0f172a">afterFileEdit ? JSON</text>
+    <text x="654" y="322" fill="#475569">schema, placeholders, coverage</text>
+    <text x="654" y="340" fill="#475569">PASS required before the judge</text>
+
+    <rect x="940" y="280" width="296" height="82" rx="6" fill="#ffedd5" stroke="#c2410c"/>
+    <text x="954" y="304" font-weight="600" fill="#9a3412">Human: Xray create</text>
+    <text x="954" y="322" fill="#9a3412">Propose-then-confirm per issue.</text>
+    <text x="954" y="340" fill="#9a3412">Jira writes are not reversible.</text>
+  </g>
+
+  <!-- Stage 1 band -->
+  <rect x="24" y="406" width="1232" height="300" rx="10" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="40" y="434" font-family="ui-sans-serif, system-ui, sans-serif" font-size="14" font-weight="700" fill="#14532d">STAGE 1  automated: test design ? code</text>
+
+  <g font-family="ui-sans-serif, system-ui, sans-serif">
+    <rect x="40" y="456" width="190" height="72" rx="6" fill="#f1f5f9" stroke="#64748b"/>
+    <text x="135" y="486" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">test-design.json</text>
+    <text x="135" y="506" text-anchor="middle" font-size="10" fill="#64748b">approved Xray cases</text>
+
+    <rect x="270" y="456" width="210" height="72" rx="6" fill="#dbeafe" stroke="#1d4ed8"/>
+    <text x="375" y="482" text-anchor="middle" font-size="12" font-weight="600" fill="#1e3a8a">test-generation</text>
+    <text x="375" y="500" text-anchor="middle" font-size="10" fill="#1e40af">data-layer ? explore-browser</text>
+    <text x="375" y="516" text-anchor="middle" font-size="10" fill="#1e40af">locators ? POM ? assertions</text>
+
+    <rect x="520" y="456" width="190" height="72" rx="6" fill="#ede9fe" stroke="#6d28d9"/>
+    <text x="615" y="482" text-anchor="middle" font-size="12" font-weight="600" fill="#5b21b6">code-reviewer</text>
+    <text x="615" y="500" text-anchor="middle" font-size="10" fill="#6d28d9">isolated judge</text>
+    <text x="615" y="516" text-anchor="middle" font-size="10" fill="#475569">wiki + golden_dataset</text>
+
+    <rect x="750" y="456" width="190" height="72" rx="6" fill="#ede9fe" stroke="#6d28d9"/>
+    <text x="845" y="486" text-anchor="middle" font-size="12" font-weight="600" fill="#5b21b6">pr-drafter</text>
+    <text x="845" y="506" text-anchor="middle" font-size="10" fill="#6d28d9">no terminal ? no merge</text>
+
+    <rect x="980" y="456" width="252" height="72" rx="6" fill="#f1f5f9" stroke="#64748b"/>
+    <text x="1106" y="486" text-anchor="middle" font-size="12" font-weight="600" fill="#0f172a">out/draft_pr.md</text>
+    <text x="1106" y="506" text-anchor="middle" font-size="10" fill="#64748b">only if stop hook PASSes</text>
+
+    <g fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)">
+      <line x1="230" y1="492" x2="266" y2="492"/>
+      <line x1="480" y1="492" x2="516" y2="492"/>
+      <line x1="710" y1="492" x2="746" y2="492"/>
+      <line x1="940" y1="492" x2="976" y2="492"/>
+    </g>
+    <path d="M615 528 C615 580 375 580 375 528" fill="none" stroke="#c2410c" stroke-width="1.25" stroke-dasharray="5 4" marker-end="url(#arrow-fail)"/>
+    <text x="430" y="574" font-size="10" fill="#c2410c">FAIL ? regenerate</text>
+  </g>
+
+  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="11">
+    <rect x="40" y="600" width="380" height="84" rx="6" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text x="54" y="624" font-weight="600" fill="#0f172a">afterFileEdit  deterministic</text>
+    <text x="54" y="642" fill="#475569">ESLint (Playwright + sonarjs) + ast-grep</text>
+    <text x="54" y="660" fill="#475569">Fires on write under src/tests/</text>
+
+    <rect x="440" y="600" width="380" height="84" rx="6" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text x="454" y="624" font-weight="600" fill="#0f172a">Judge  dirty-02 is the reason</text>
+    <text x="454" y="642" fill="#475569">Correct web-first assertion, wrong</text>
+    <text x="454" y="660" fill="#475569">precondition. Linters cannot see it.</text>
+
+    <rect x="840" y="600" width="392" height="84" rx="6" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text x="854" y="624" font-weight="600" fill="#0f172a">stop + beforeShellExecution</text>
+    <text x="854" y="642" fill="#475569">Semantic re-check before out/draft_pr.md</text>
+    <text x="854" y="660" fill="#475569">Blocks git merge / push main / gh pr merge</text>
+  </g>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrow-fail" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#c2410c"/>
+    </marker>
+  </defs>
+</svg>

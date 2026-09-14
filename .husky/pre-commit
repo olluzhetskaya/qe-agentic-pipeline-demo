@@ -1,0 +1,19 @@
+#!/bin/sh
+# Husky pre-commit hook — deterministic gate on staged TypeScript files.
+#
+# Runs lint-staged for changed TypeScript, then repository relationship gates
+# (config, wiki/design, fixtures) plus quality (AC grades, failure-modes,
+# per-test wiki inversion).
+#
+# What fires here (via eslint.config.mjs):
+#   - TypeScript ESLint rules (strict mode)
+#   - eslint-plugin-playwright: no-wait-for-timeout, expect-expect,
+#     prefer-web-first-assertions, no-raw-locators (*.spec.ts only)
+#   - eslint-plugin-sonarjs: Sonar's 279 JS/TS rules locally
+#   - custom pipeline gates that ESLint cannot express
+#
+# This is the developer-side gate; the CI gate (sonar-project.properties)
+# is the same rules run server-side with cross-run history.
+
+npx lint-staged
+npm run gate:pipeline

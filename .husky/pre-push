@@ -1,0 +1,25 @@
+#!/bin/sh
+# Husky pre-push hook — full validation chain before pushing to remote.
+#
+# Mirrors telecom-test-automation's validate:push chain:
+#   1. typecheck  — tsc --noEmit (catches type errors not caught by eslint)
+#   2. lint       — ESLint with playwright + sonarjs plugins across src/
+#   3. gate:pipeline — config, wiki/design, and data relationship invariants
+#   4. lint:ast-grep — structural checks: no-page-in-spec,
+#                      no-boolean-literal-assertion, no-boolean-method-in-pom
+#   5. smoke      — Playwright @smoke suite (only if server is reachable)
+#
+# The validate:push script covers the first four; smoke is conditional.
+
+set -e
+
+echo "▶ validate:push (typecheck + lint + pipeline gates + ast-grep)..."
+npm run validate:push
+
+if curl -sf "${BASE_URL:-http://localhost:3000}/health" > /dev/null 2>&1; then
+  echo "▶ smoke tests (server detected at ${BASE_URL:-http://localhost:3000})..."
+  npm run test:smoke
+else
+  echo "⚠  No test server at ${BASE_URL:-http://localhost:3000} — skipping smoke tests."
+  echo "   Set BASE_URL and start your server to run them on push."
+fi

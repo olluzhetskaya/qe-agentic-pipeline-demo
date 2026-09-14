@@ -1,8 +1,8 @@
 # Business Domain: Tenant Onboarding (HCM Platform)
 
-This wiki page is the retrieval context the spec-checker agent grounds every
-generated test against. Keep it short and rule-shaped — the agent reads this,
-not a full requirements doc.
+This wiki page is the retrieval context Stage 0 and Stage 1 ground every
+generated test against. Keep it short and rule-shaped — agents and skills
+read this, not a full requirements doc.
 
 ## Core entities
 
@@ -14,18 +14,36 @@ not a full requirements doc.
 
 ## Business rules an agent-generated test must respect
 
-1. **Submission gating**: the onboarding wizard's "Finish" button stays
+Each rule is an invariant plus the machine-readable lines the gates enforce.
+The harness contains no rule text of its own — it reads these:
+
+| Line | Meaning | Enforced by |
+|---|---|---|
+| `Design:` | Techniques Stage 0c must inherit | `design-gates.ts` |
+| `Failure mode:` | Phrases proving a designed case covers the negative (`\|` = alternatives) | `quality-gates.ts` |
+| `Assertion:` | `<locator> <matcher> requires <call>` — the precondition a spec must perform first | `quality-gates.ts` |
+
+A story test plan does not live here — that is `data/test-design.json`.
+
+1. **Submission gating** (`submission-gating`): the onboarding wizard's "Finish" button stays
    disabled until `benefits_selected` is reached. A test that asserts the
    button is enabled before benefit selection is testing the wrong behavior —
    flag it, don't just assert it.
-2. **Tenant isolation**: no UI flow may show BenefitPlans belonging to a
+   Design: State Transition, Error Guessing
+   Failure mode: disabled | cannot be clicked
+   Assertion: finishButton toBeEnabled requires selectBenefitPlan
+2. **Tenant isolation** (`tenant-isolation`): no UI flow may show BenefitPlans belonging to a
    different Tenant, even in dropdowns. This is the #1 regression risk on this
    platform (multi-tenant SaaS) and should be spot-checked in any onboarding
    test that touches the plan-selection screen.
-3. **Plan tier limits**: Starter-tier tenants may only offer 1 BenefitPlan;
+   Design: Equivalence Partitioning, Error Guessing
+   Failure mode: absent | not listed | not visible | none from | cross-tenant | other tenant | tenant b
+3. **Plan tier limits** (`plan-tier-limits`): Starter-tier tenants may only offer 1 BenefitPlan;
    Growth and Enterprise allow multiple. A generated test for plan selection
    should use a Growth or Enterprise fixture tenant unless it is specifically
    testing the Starter limit.
+   Design: Boundary Value Analysis
+   Failure mode: exactly one | cannot add | second plan | toHaveCount(1) | more than one
 
 ## Why this file exists
 

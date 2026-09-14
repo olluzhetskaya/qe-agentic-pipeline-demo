@@ -15,7 +15,7 @@ import { OnboardingPage } from '@pages/onboarding-page';
 
 test('finish enabled before selection (WRONG)', async ({ page }) => {
   const onboarding = new OnboardingPage(page);
-  await onboarding.goto('/onboarding/wizard');
+  await onboarding.gotoWizard();
 
   await expect(onboarding.finishButton).toBeEnabled(); // inverts business rule 1
 });

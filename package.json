@@ -4,19 +4,56 @@
   "type": "module",
   "scripts": {
     "test": "playwright test",
-    "lint": "eslint src .cursor eslint.config.mjs playwright.config.ts"
+    "test:smoke": "playwright test --grep @smoke",
+    "lint": "eslint src eslint.config.mjs playwright.config.ts",
+    "lint:fix": "eslint src eslint.config.mjs playwright.config.ts --fix",
+    "lint:ast-grep": "npx ast-grep scan --config .ast-grep/sgconfig.yml src golden_dataset/clean",
+    "gate:pipeline": "tsx src/validation/pipeline-gates.ts all",
+    "gate:config": "tsx src/validation/pipeline-gates.ts config",
+    "gate:design": "tsx src/validation/pipeline-gates.ts design",
+    "gate:data": "tsx src/validation/pipeline-gates.ts data",
+    "gate:quality": "tsx src/validation/pipeline-gates.ts quality",
+    "gate:verdicts": "tsx src/validation/pipeline-gates.ts verdicts",
+    "verdict:context": "tsx src/validation/verdict-control.ts context",
+    "verdict:check": "tsx src/validation/verdict-control.ts check",
+    "review:data": "tsx src/review/generate-review-data.ts",
+    "review:typecheck": "tsc -p review-ui/tsconfig.json",
+    "review:ui": "npm run review:data && npm run review:typecheck && vite --config review-ui/vite.config.ts",
+    "review:build": "npm run review:data && npm run review:typecheck && vite build --config review-ui/vite.config.ts",
+    "typecheck": "tsc --noEmit",
+    "validate": "npm run typecheck && npm run lint && npm run gate:pipeline",
+    "validate:push": "npm run validate && npm run lint:ast-grep",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "src/**/*.ts": "eslint --max-warnings 0"
   },
   "devDependencies": {
     "@ast-grep/cli": "^0.28.0",
     "@playwright/test": "^1.48.0",
     "@types/node": "^22.20.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "@typescript-eslint/eslint-plugin": "^8.8.0",
     "@typescript-eslint/parser": "^8.8.0",
+    "@vitejs/plugin-react": "^6.1.1",
     "eslint": "^9.11.0",
     "eslint-plugin-playwright": "^2.0.0",
     "eslint-plugin-sonarjs": "^4.2.0",
     "globals": "^17.12.0",
+    "husky": "^9.1.7",
+    "langfuse": "^3.35.0",
+    "lint-staged": "^15.2.10",
+    "tsx": "^4.19.0",
     "typescript": "^5.6.0",
-    "typescript-eslint": "^8.8.0"
+    "typescript-eslint": "^8.8.0",
+    "vite": "^8.3.0"
+  },
+  "dependencies": {
+    "@xyflow/react": "^12.11.6",
+    "dot-prop": "^10.2.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-json-view-lite": "^2.5.0"
   }
 }

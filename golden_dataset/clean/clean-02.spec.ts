@@ -1,20 +1,22 @@
-import { test, expect } from '@playwright/test';
-import { OnboardingPage } from '@pages/onboarding-page';
+import { test, expect, Tenants, Tags } from '@fixtures';
 
 // GOLDEN: clean-02 — no cross-tenant BenefitPlan leakage (AC-3).
-// Why this is 'clean': directly tests the #1 regression risk called out in
-// wiki/business_domain.md (tenant isolation), using a Growth-tier fixture as
-// that rule specifies. toHaveText() against a multi-element Locator is
-// itself a web-first assertion — it retries and checks the exact set AND
-// order in one call, instead of fetching text into an array and comparing
-// with plain .every()/.toBe(), which would snapshot once and not retry.
+// Why this is 'clean':
+//   - Tenant ID and expected plan labels from Tenants.growth01 — no inline objects
+//   - test.describe with Tags.onboarding — grep-able in CI
+//   - gotoWizard(tenant.id) not goto('/onboarding/wizard?tenant=...')
+//   - toHaveText() on a multi-element Locator: retries AND checks full ordered set
 
-const growthTierTenant = { id: 'tenant-growth-01', planLabels: ['Dental', 'Vision'] };
+test.describe('Tenant isolation', { tag: [Tags.onboarding] }, () => {
+  test('no cross-tenant plans visible in dropdown', async ({ onboarding }) => {
+    const tenant = Tenants.growth01;
 
-test('no cross-tenant plans visible in dropdown', async ({ page }) => {
-  const onboarding = new OnboardingPage(page);
-  await onboarding.goto(`/onboarding/wizard?tenant=${growthTierTenant.id}`);
-  await onboarding.openPlanDropdown();
-
-  await expect(onboarding.planOptions).toHaveText(growthTierTenant.planLabels);
+    await test.step(`Open dropdown as employee of ${tenant.id}`, async () => {
+      await onboarding.gotoWizard(tenant.id);
+      await onboarding.openPlanDropdown();
+    });
+    await test.step('Assert only tenant plans are visible', async () => {
+      await expect(onboarding.planOptions).toHaveText([...tenant.planLabels]);
+    });
+  });
 });

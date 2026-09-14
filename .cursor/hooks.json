@@ -1,14 +1,37 @@
 {
   "version": 1,
   "hooks": {
+    "sessionStart": [
+      {
+        "command": "npx tsx src/observability/session-start.ts"
+      }
+    ],
     "beforeShellExecution": [
-      { "command": "node .cursor/hooks/before-shell-execution.cjs" }
+      {
+        "command": "npx tsx src/observability/before-shell-execution.ts",
+        "failClosed": true
+      }
+    ],
+    "beforeMCPExecution": [
+      {
+        "command": "npx tsx src/observability/before-mcp-execution.ts",
+        "failClosed": true
+      }
     ],
     "afterFileEdit": [
-      { "command": "node .cursor/hooks/after-file-edit.cjs" }
+      {
+        "command": "npx tsx src/observability/after-file-edit.ts",
+        "failClosed": true
+      }
     ],
     "stop": [
-      { "command": "node .cursor/hooks/stop.cjs" }
+      {
+        "command": "npx tsx src/observability/stop.ts",
+        "failClosed": true
+      }
+    ],
+    "afterAgentResponse": [
+      { "command": "npx tsx src/observability/after-agent-response.ts" }
     ]
   }
 }

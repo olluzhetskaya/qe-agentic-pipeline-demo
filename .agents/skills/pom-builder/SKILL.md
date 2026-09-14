@@ -9,37 +9,97 @@ description: >
 # Skill: POM Builder
 
 ## When to use
+
 Any time a generated test needs to interact with a page/screen that doesn't
-already have a Page Object in `src/pages/`.
+already have a Page Object in `src/pages/`, or when `explore-browser` plus
+`locator-strategy` supply replacement locators for an existing Page Object.
+
+New or repaired locators come from a live scrape, then from
+`locator-strategy`. Do not hard-code guessed selectors in the class.
 
 ## Rules this skill enforces
-1. Every Page class extends `BasePage` (see `src/pages/base-page.ts`).
-2. Locators are `private readonly` fields, defined once, at the top of the class — **unless a test needs to assert against them directly**, in which case expose them as `public readonly Locator` fields (see rule 6).
-3. Public *action* methods are business language
-   (`selectBenefitPlan(name)`, not `clickDropdownItem(x)`).
-4. No locator string appears outside the Page Object it belongs to — a test
-   file that contains a `page.locator(...)` call directly is a violation the
-   code-reviewer agent and ESLint's `playwright/no-raw-locators` rule should
-   both flag.
-5. Every interaction method awaits an explicit wait
-   (`await expect(locator).toBeVisible()`) before acting — never a bare
-   `.click()` with no prior wait, and never `page.waitForTimeout()`.
-6. **Never wrap element state in an async boolean-returning method**
-   (`isFinishEnabled()`, `isVisible()`, etc.). Expose the `Locator` itself
-   as a public readonly field instead, and let the test assert on it with a
-   web-first matcher: `await expect(page.finishButton).toBeEnabled()`, not
-   `expect(await page.isFinishEnabled()).toBe(true)`. This isn't just style
-   — a boolean method call is a one-time snapshot with no retry, while a
-   web-first assertion on a Locator polls until the condition holds or the
-   timeout elapses. It also has a sharper failure mode worth knowing:
-   ESLint's `playwright/prefer-web-first-assertions` rule only matches a
-   *raw* Playwright locator method call (`.isEnabled()` etc. called
-   directly) — once that call is hidden one level behind your own method
-   name, the linter can no longer see the pattern at all. Wrapping locator
-   state in a boolean method doesn't just lose auto-retry, it defeats
-   static analysis too. `src/pages/onboarding-page.ts` and
-   `golden_dataset/dirty/dirty-03.spec.ts` show both sides of this.
+
+1. **Every Page class extends `BasePage`** (the base class under `src/pages/`).
+
+2. **Locators are `private readonly` fields** by default, defined once at
+   the top of the class — **unless a test needs to assert on them**, in
+   which case expose them as `public readonly Locator` (see rule 6).
+
+3. **Public action methods use business language** —
+   `selectBenefitPlan(name)`, not `clickDropdownItem(x)`.
+
+4. **No locator string outside the Page Object it belongs to.** A test file
+   that contains a `page.locator(...)` call directly is a violation that
+   ESLint's `playwright/no-raw-locators` and code-reviewer both flag.
+
+5. **Interactions rely on the Locator's own auto-retry — never a manual
+   wait.** `await this.finishButton.click()` is correct. A preceding
+   `await expect(locator).toBeVisible()` is wrong: `click()` and `fill()`
+   already retry attached/visible/stable/receives-events/enabled/editable
+   until the action timeout, so the assertion checks less than the built-in
+   gate does, burns a second timeout budget, and hides Playwright's
+   actionability log behind an assertion failure. `page.waitForTimeout()` is
+   never acceptable.
+
+6. **Never wrap element state in an async boolean-returning method.**
+   Expose the `Locator` itself as a `public readonly` field and let the test
+   assert on it with a web-first matcher:
+   `await expect(page.finishButton).toBeEnabled()`, not
+   `expect(await page.isFinishEnabled()).toBe(true)`.
+   Wrapping locator state in a boolean method loses auto-retry AND defeats
+   ESLint's `playwright/prefer-web-first-assertions` rule — the linter can't
+   see through the method boundary. `golden_dataset/dirty/` (boolean
+   assertion) and the Page Objects under `src/pages/` show both sides.
+
+7. **Don't import test data into the Page Object.** Tenant IDs, plan names,
+   and other fixture values belong in `src/data/`, not hardcoded in the POM.
+   The Page Object accepts dynamic values as method arguments
+   (`selectBenefitPlan(planName: string)`) — callers pass values from the
+   data layer.
+
+## Fluent return pattern
+
+Action methods return `this` to allow chaining in tests:
+```typescript
+await onboarding
+  .goto('/onboarding/wizard')
+  .then(() => onboarding.selectBenefitPlan(planName));
+```
+Or just sequentially — either is valid. The `Promise<this>` return type on
+every action method is what makes chaining possible.
 
 ## Output shape
-A single `.ts` file under `src/pages/`, following the pattern in
-`src/pages/onboarding-page.ts`.
+
+A single `.ts` file under `src/pages/`, following the existing Page Objects
+there:
+
+```typescript
+export class MyPage extends BasePage {
+  // Assertion target: public readonly
+  readonly someButton: Locator = this.page.getByRole('button', { name: 'Submit' });
+
+  // Internal only: private readonly
+  private readonly dropdown: Locator = this.page.getByTestId('my-dropdown');
+  private readonly optionFor = (name: string) => this.page.getByTestId(`option-${name}`);
+
+  constructor(page: Page) { super(page); }
+
+  async selectOption(name: string): Promise<this> {
+    await this.dropdown.click();
+    await this.optionFor(name).click();
+    return this;
+  }
+}
+```
+
+## What ast-grep enforces
+
+`no-boolean-method-in-pom.yml` fires on any `async methodName(...): Promise<boolean>`
+in a class body — so there's no need to rely on code-reviewer alone to catch
+rule 6 violations. The rule runs during `npm run lint:ast-grep` and on the
+`pre-push` Husky hook.
+
+## References
+
+- `src/pages/` — Page Objects and `BasePage` (auto-retrying Locator API)
+- `golden_dataset/dirty/` — what rule 6 prevents (boolean wrapper + `.toBe(true)`)

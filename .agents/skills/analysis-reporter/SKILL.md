@@ -10,9 +10,9 @@ description: >
 ## Output shape
 A short markdown block with three sections:
 1. **Gates passed/failed** — one line per gate (ESLint, ast-grep, Sonar,
-   semantic review), pass/fail, with the specific check that failed if any.
+   quality, pipeline, semantic review from `data/verdicts/`), pass/fail, with the specific check that failed if any.
 2. **Coverage delta** — what business rule(s) this test now covers, referenced
-   by name from `wiki/business_domain.md`.
+   by name from `wiki/`.
 3. **Reviewer note** — one sentence flagging anything a human should look at
    even though gates passed (e.g. "judge-classified criterion, please confirm
    layout").

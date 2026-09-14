@@ -1,12 +1,9 @@
 {
   "mcpServers": {
     "xray": {
-      "command": "node",
-      "args": ["/path/to/xray-mcp/dist/index.js"],
+      "command": "npx",
+      "args": ["-y", "@xray/mcp-server"],
       "env": {
-        "JIRA_BASE_URL": "https://your-domain.atlassian.net",
-        "JIRA_EMAIL": "your-email@example.com",
-        "JIRA_API_TOKEN": "your-api-token-here",
         "XRAY_CLIENT_ID": "your-xray-client-id",
         "XRAY_CLIENT_SECRET": "your-xray-client-secret"
       }

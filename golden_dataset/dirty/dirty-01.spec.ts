@@ -5,14 +5,13 @@ import { OnboardingPage } from '@pages/onboarding-page';
 // (page.waitForTimeout instead of an explicit wait, plus an assertion that
 // isn't tied to any acceptance criterion).
 //
-// Caught three independent ways: playwright/no-wait-for-timeout,
-// sonarjs/no-fixed-wait-in-tests, and the ast-grep rule all fire on the
-// same line — proof that overlapping static tools aren't redundant, they're
-// three chances to catch the same real mistake.
+// Caught two independent ways: playwright/no-wait-for-timeout and
+// sonarjs/no-fixed-wait-in-tests fire on the same line. A third ast-grep
+// copy of waitForTimeout was dropped — ESLint already owns that pattern.
 
 test('finish button bad pattern', async ({ page }) => {
   const onboarding = new OnboardingPage(page);
-  await onboarding.goto('/onboarding/wizard');
+  await onboarding.gotoWizard();
   await onboarding.selectBenefitPlan('Dental');
 
   await page.waitForTimeout(3000); // violation: hardcoded wait
