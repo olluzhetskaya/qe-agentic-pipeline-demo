@@ -1,0 +1,37 @@
+{
+  "sut_root": "../../legacy-ta-framework",
+  "source_framework": "cucumber",
+  "target_framework": "playwright",
+  "status": "AUTO_PROCEED",
+  "reason": null,
+  "escalate": null,
+  "features": [],
+  "step_definitions": [
+    { "path": "packages/cucumber-tests/src/features/GCRM/steps/AccountCreation.steps.ts", "patterns": [] },
+    { "path": "packages/cucumber-tests/src/features/GCRM/steps/Amendment.steps.ts", "patterns": [] },
+    { "path": "packages/cucumber-tests/src/features/GCRM/steps/AuditScripts.steps.ts", "patterns": [] },
+    { "path": "packages/cucumber-tests/src/features/GCRM/steps/ContractActivation.steps.ts", "patterns": [] },
+    { "path": "packages/cucumber-tests/src/features/GCRM/steps/Dashboard.steps.ts", "patterns": [] },
+    { "path": "packages/cucumber-tests/src/features/GCRM/steps/GlobalSearch.steps.ts", "patterns": [] },
+    { "path": "packages/cucumber-tests/src/features/GCRM/steps/OpportunityCreation.steps.ts", "patterns": [] },
+    { "path": "packages/cucumber-tests/src/features/GCRM/steps/OrderGeneration.steps.ts", "patterns": [] },
+    { "path": "packages/cucumber-tests/src/features/GCRM/steps/QuoteApproval.steps.ts", "patterns": [] },
+    { "path": "packages/cucumber-tests/src/features/GCRM/steps/QuoteCreation.steps.ts", "patterns": [] },
+    { "path": "packages/cucumber-tests/src/features/LCRM/steps/DataTraversalVerification.steps.ts", "patterns": [] },
+    { "path": "packages/cucumber-tests/src/features/LCRM/steps/LVIslandDataTraversal.steps.ts", "patterns": [] },
+    { "path": "packages/cucumber-tests/src/features/LCRM/steps/NASFGeneration.steps.ts", "patterns": [] },
+    { "path": "packages/cucumber-tests/src/features/LCRM/steps/PostSalesDataGeneration.steps.ts", "patterns": [] },
+    { "path": "packages/cucumber-tests/src/features/common/steps/AccountRelated.steps.ts", "patterns": [] },
+    { "path": "packages/cucumber-tests/src/features/common/steps/EditRecord.steps.ts", "patterns": [] },
+    { "path": "packages/cucumber-tests/src/features/common/steps/Login.steps.ts", "patterns": [] },
+    { "path": "packages/cucumber-tests/src/features/common/steps/Navigation.steps.ts", "patterns": [] },
+    { "path": "packages/cucumber-tests/src/features/common/steps/OpportunityRelated.steps.ts", "patterns": [] },
+    { "path": "packages/cucumber-tests/src/features/common/steps/QuoteRelated.steps.ts", "patterns": [] }
+  ],
+  "hooks": [
+    { "path": "packages/cucumber-tests/src/support/cucumber/common-hooks.ts" },
+    { "path": "packages/cucumber-tests/src/support/cucumber/custom-world.ts" },
+    { "path": "packages/cucumber-tests/src/support/cucumber/gcrm-hooks.ts" },
+    { "path": "packages/cucumber-tests/src/support/cucumber/lcrm-hooks.ts" }
+  ]
+}

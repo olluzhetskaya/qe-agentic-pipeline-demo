@@ -1,0 +1,75 @@
+{
+  "inventory_sha256": "sha256:2046eced126218080dd0b9dd4d505dae4906e43766a7b8b982933face18a3679",
+  "cases": [
+    {
+      "id": "MIG-1",
+      "batch_id": "BATCH-1",
+      "feature_path": "packages/cucumber-tests/src/features/GCRM/AccountCreation.feature",
+      "scenario": "Create a new account for GCRM",
+      "decision": "Automate",
+      "drop_reason": null,
+      "automation_status": "Automated",
+      "playwright": {
+        "spec": "tests/account-creation.spec.ts",
+        "test_title": "should create a new account for GCRM",
+        "steps": [
+          {
+            "action": "Login as Sales user to GCRM",
+            "data": "salesUser",
+            "result": "User is authenticated and on GCRM home page"
+          },
+          {
+            "action": "Navigate to Accounts page from Home page",
+            "data": "-",
+            "result": "Accounts list page is displayed"
+          },
+          {
+            "action": "Click New button on Accounts page",
+            "data": "-",
+            "result": "New Account form is displayed"
+          },
+          {
+            "action": "Fill in required fields on New account page and save",
+            "data": "accountData",
+            "result": "Account record is created successfully: account detail page displays with success message and account name is visible"
+          }
+        ]
+      }
+    },
+    {
+      "id": "MIG-2",
+      "batch_id": "BATCH-1",
+      "feature_path": "packages/cucumber-tests/src/features/GCRM/OpportunityCreation.feature",
+      "scenario": "Create a new opportunity for GCRM",
+      "decision": "Automate",
+      "drop_reason": null,
+      "automation_status": "Automated",
+      "playwright": {
+        "spec": "tests/opportunity-creation.spec.ts",
+        "test_title": "should create a new opportunity for GCRM",
+        "steps": [
+          {
+            "action": "Login as Sales user to GCRM",
+            "data": "salesUser",
+            "result": "User is authenticated and on GCRM home page"
+          },
+          {
+            "action": "Navigate to Account page",
+            "data": "existingAccount",
+            "result": "Account detail page is displayed"
+          },
+          {
+            "action": "Click on New Opportunity button",
+            "data": "-",
+            "result": "New Opportunity form is displayed"
+          },
+          {
+            "action": "Fill in Opportunity required fields and save",
+            "data": "opportunityData",
+            "result": "Opportunity record is saved successfully: opportunity detail page displays with success confirmation and opportunity name is visible"
+          }
+        ]
+      }
+    }
+  ]
+}

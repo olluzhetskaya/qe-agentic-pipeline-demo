@@ -1,0 +1,15 @@
+id: no-page-in-spec
+language: typescript
+message: >
+  Raw Playwright `page` in a spec. Specs receive a concrete Page Object
+  from `@fixtures` (e.g. async ({ onboarding }) => ...) and never the
+  `page` fixture. Navigation, locators, and waits live on the POM.
+severity: error
+files:
+  - "**/*.spec.ts"
+rule:
+  any:
+    - kind: identifier
+      regex: "^page$"
+    - kind: shorthand_property_identifier_pattern
+      regex: "^page$"

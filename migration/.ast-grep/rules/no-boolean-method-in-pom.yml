@@ -1,0 +1,15 @@
+id: no-boolean-method-in-pom
+language: typescript
+message: >
+  Async method returning Promise<boolean> in a class — likely a boolean
+  state wrapper (isEnabled, hasPlans, etc.). Expose the Locator as a
+  public readonly field instead and let tests assert with a web-first
+  matcher (await expect(locator).toBeEnabled()). Boolean wrappers lose
+  Playwright auto-retry and hide the locator call from ESLint's
+  prefer-web-first-assertions rule. See pom-builder skill rule 6 and
+  golden_dataset/dirty/dirty-03.spec.ts.
+severity: error
+rule:
+  kind: method_definition
+  has:
+    pattern: "Promise<boolean>"

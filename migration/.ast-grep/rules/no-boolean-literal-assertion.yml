@@ -1,0 +1,19 @@
+id: no-boolean-literal-assertion
+language: typescript
+message: >
+  Asserting a boolean literal directly (expect(x).toBe(true/false)) is a
+  smell. If x came from a Playwright locator method (isVisible, isEnabled,
+  isChecked, isDisabled), use the matching web-first assertion instead
+  (toBeVisible, toBeEnabled, toBeChecked, toBeDisabled) — see
+  .agents/skills/assertion-author.
+  Note this rule is purely syntactic and doesn't know where x came from, so
+  it will also fire on a legitimate boolean assertion unrelated to a
+  locator. That's a real limitation, not a bug to route around: it's why
+  ESLint's playwright/prefer-web-first-assertions rule (which does know the
+  difference, via AST method-name matching) is the primary check, and this
+  is the second, coarser one — not the other way around.
+severity: warning
+rule:
+  any:
+    - pattern: expect($X).toBe(true)
+    - pattern: expect($X).toBe(false)
