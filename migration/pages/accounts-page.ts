@@ -9,6 +9,11 @@ export class AccountsPage extends BasePage {
   private readonly saveButton: Locator;
   private readonly successMessage: Locator;
   private readonly accountDetailName: Locator;
+  
+  // Public readonly Locators for assertions in specs
+  readonly accountsPageHeading: Locator;
+  readonly newAccountFormHeading: Locator;
+  readonly accountDetailHeading: Locator;
 
   constructor(page: import('@playwright/test').Page) {
     super(page);
@@ -20,6 +25,10 @@ export class AccountsPage extends BasePage {
     this.saveButton = page.getByRole('button', { name: 'Save' });
     this.successMessage = page.getByText('Account created successfully');
     this.accountDetailName = page.locator('[data-testid="account-name"]');
+    
+    this.accountsPageHeading = page.getByRole('heading', { name: 'Accounts' });
+    this.newAccountFormHeading = page.getByRole('heading', { name: 'New Account' });
+    this.accountDetailHeading = page.getByRole('heading', { name: /^/ }); // Dynamic account name
   }
 
   async clickNew(): Promise<void> {

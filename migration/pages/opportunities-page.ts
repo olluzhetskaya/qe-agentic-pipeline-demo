@@ -9,6 +9,9 @@ export class OpportunitiesPage extends BasePage {
   private readonly saveButton: Locator;
   private readonly successMessage: Locator;
   private readonly opportunityDetailName: Locator;
+  
+  // Public readonly Locators for assertions in specs
+  readonly newOpportunityFormHeading: Locator;
 
   constructor(page: import('@playwright/test').Page) {
     super(page);
@@ -20,6 +23,8 @@ export class OpportunitiesPage extends BasePage {
     this.saveButton = page.getByRole('button', { name: 'Save' });
     this.successMessage = page.getByText('Opportunity created successfully');
     this.opportunityDetailName = page.locator('[data-testid="opportunity-name"]');
+    
+    this.newOpportunityFormHeading = page.getByRole('heading', { name: 'New Opportunity' });
   }
 
   async clickNewOpportunity(): Promise<void> {

@@ -16,12 +16,12 @@ test.describe('GCRM : Opportunity Creation', { tag: [Tags.gcrm, Tags.smoke] }, (
 
     await test.step('Navigate to Account page', async () => {
       await accounts.goto(`/accounts/${account.name}`);
-      await expect(accounts.page.getByRole('heading', { name: account.name })).toBeVisible();
+      await expect(accounts.accountDetailHeading).toContainText(account.name);
     });
 
     await test.step('Click on New Opportunity button', async () => {
       await opportunities.clickNewOpportunity();
-      await expect(opportunities.page.getByRole('heading', { name: 'New Opportunity' })).toBeVisible();
+      await expect(opportunities.newOpportunityFormHeading).toBeVisible();
     });
 
     await test.step('Fill in Opportunity required fields and save', async () => {

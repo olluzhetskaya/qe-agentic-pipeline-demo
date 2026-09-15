@@ -15,12 +15,12 @@ test.describe('GCRM : Account Creation', { tag: [Tags.gcrm, Tags.smoke] }, () =>
 
     await test.step('Navigate to Accounts page from Home page', async () => {
       await accounts.goto('/accounts');
-      await expect(accounts.page.getByRole('heading', { name: 'Accounts' })).toBeVisible();
+      await expect(accounts.accountsPageHeading).toBeVisible();
     });
 
     await test.step('Click New button on Accounts page', async () => {
       await accounts.clickNew();
-      await expect(accounts.page.getByRole('heading', { name: 'New Account' })).toBeVisible();
+      await expect(accounts.newAccountFormHeading).toBeVisible();
     });
 
     await test.step('Fill in required fields on New account page and save', async () => {
