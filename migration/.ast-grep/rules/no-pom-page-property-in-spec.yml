@@ -1,0 +1,16 @@
+id: no-pom-page-property-in-spec
+language: typescript
+message: >
+  Do not access .page property on Page Objects in specs. Expose locators
+  as public readonly fields instead. Example: Change accounts.page.getByRole()
+  to accounts.accountsPageHeading. See pom-builder skill for pattern.
+severity: error
+files:
+  - "**/*.spec.ts"
+rule:
+  pattern: $POM.page.$METHOD($$$)
+note: >
+  This catches specs accessing the protected page property through POMs
+  (accounts.page.getByRole, login.page.locator, etc.), which violates
+  the POM encapsulation principle. All locators must be defined in the
+  Page Object and exposed as public readonly Locator fields.
