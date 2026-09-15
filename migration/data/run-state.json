@@ -1,7 +1,7 @@
 {
   "pipeline": "cucumber-to-playwright",
-  "stage": "1c_pr_draft",
-  "updated_at": "2026-09-15T10:30:00.000Z",
+  "stage": "1b_code_review",
+  "updated_at": "2026-09-15T14:32:00.000Z",
   "stages": {
     "0a_inventory": "pass",
     "0b_coverage": "pass",
@@ -9,13 +9,12 @@
     "0d_mapping_review": "pass",
     "1a_generation": "pass",
     "1b_code_review": "pass",
-    "1c_pr_draft": "pass"
+    "1c_pr_draft": "pending"
   },
   "batch": {
-    "id": "BATCH-1",
+    "id": "BATCH-2",
     "scope_feature_paths": [
-      "packages/cucumber-tests/src/features/GCRM/AccountCreation.feature",
-      "packages/cucumber-tests/src/features/GCRM/OpportunityCreation.feature"
+      "packages/cucumber-tests/src/features/GCRM/Amendment.feature"
     ],
     "scope_tags": null,
     "case_ids": null

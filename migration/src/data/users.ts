@@ -12,4 +12,10 @@ export const Users = {
     role: 'Sales',
     system: 'GCRM',
   },
+  adminUser: {
+    username: process.env.GCRM_ADMIN_USER || 'admin@test.com',
+    password: process.env.GCRM_ADMIN_PASSWORD || 'password',
+    role: 'Admin',
+    system: 'GCRM',
+  },
 } as const satisfies Record<string, User>;

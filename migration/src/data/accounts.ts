@@ -15,4 +15,9 @@ export const Accounts = {
     type: 'Prospect',
     industry: 'Technology',
   },
+  accountWithContract: {
+    name: 'Amendment Test Account',
+    type: 'Customer',
+    industry: 'Healthcare',
+  },
 } as const satisfies Record<string, Account>;

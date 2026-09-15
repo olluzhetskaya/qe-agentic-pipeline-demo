@@ -15,6 +15,8 @@ export class AccountsPage extends BasePage {
   readonly newAccountFormHeading: Locator;
   readonly accountDetailHeading: Locator;
 
+  private readonly manageInstallBaseButton: Locator;
+
   constructor(page: import('@playwright/test').Page) {
     super(page);
     
@@ -25,6 +27,7 @@ export class AccountsPage extends BasePage {
     this.saveButton = page.getByRole('button', { name: 'Save' });
     this.successMessage = page.getByText('Account created successfully');
     this.accountDetailName = page.locator('[data-testid="account-name"]');
+    this.manageInstallBaseButton = page.getByRole('button', { name: 'Manage Install Base' });
     
     this.accountsPageHeading = page.getByRole('heading', { name: 'Accounts' });
     this.newAccountFormHeading = page.getByRole('heading', { name: 'New Account' });
@@ -55,5 +58,9 @@ export class AccountsPage extends BasePage {
 
   getAccountDetailName(): Locator {
     return this.accountDetailName;
+  }
+
+  async openManageInstallBase(): Promise<void> {
+    await this.manageInstallBaseButton.click();
   }
 }

@@ -70,6 +70,121 @@
           }
         ]
       }
+    },
+    {
+      "id": "MIG-3",
+      "batch_id": "BATCH-2",
+      "feature_path": "packages/cucumber-tests/src/features/GCRM/Amendment.feature",
+      "scenario": "GCRM: Price Increase Amendment & Renewal",
+      "decision": "Defer",
+      "drop_reason": "Scenario marked as @draft in source. Complex multi-step amendment flow with quote editing, product line management, and renewal verification requires stable requirements and UI before automation.",
+      "automation_status": "Not yet automated",
+      "playwright": null
+    },
+    {
+      "id": "MIG-4",
+      "batch_id": "BATCH-2",
+      "feature_path": "packages/cucumber-tests/src/features/GCRM/Amendment.feature",
+      "scenario": "GCRM: Add-On Membership Amendment (Diabetes Management - PPPM)",
+      "decision": "Automate",
+      "drop_reason": null,
+      "automation_status": "Automated",
+      "playwright": {
+        "spec": "tests/amendment-addon-diabetes.spec.ts",
+        "test_title": "should complete add-on membership amendment for Diabetes Management",
+        "steps": [
+          {
+            "action": "Login as Admin user to GCRM",
+            "data": "adminUser",
+            "result": "User is authenticated and on GCRM home page"
+          },
+          {
+            "action": "Navigate to Account page",
+            "data": "accountWithContract",
+            "result": "Account detail page is displayed"
+          },
+          {
+            "action": "Amend contract for Recurring Services by choosing Change order on Manage Install Base dialog",
+            "data": "recurringServicesContract",
+            "result": "Edit Quote page is displayed with amendment quote"
+          },
+          {
+            "action": "Exit from Edit Quote page and navigate to quote page",
+            "data": "-",
+            "result": "Quote page is displayed"
+          },
+          {
+            "action": "Navigate to Amendment Opportunity from quote page and update fields",
+            "data": "amendmentOpportunityData",
+            "result": "Opportunity page displays with Subtype as Change Order, Number of Lives as 500, and Sub-Type Detail as Add-On Membership"
+          },
+          {
+            "action": "Navigate to Quote page from Opportunity page",
+            "data": "-",
+            "result": "Quote page is displayed"
+          },
+          {
+            "action": "Navigate to Edit Quote page and add Diabetes Management product",
+            "data": "diabetesManagementProduct",
+            "result": "New Diabetes Management line is added to quote"
+          },
+          {
+            "action": "Edit the new Diabetes Management line and update Per Unit Discount to -3",
+            "data": "diabetesLineEditData",
+            "result": "Diabetes Management line displays with Net ARR USD 7,020.00, Participant Quantity 30, Quantity 7.50, and Subscription Fee USD 78.00"
+          },
+          {
+            "action": "Type N/A in Reason for Approval field and save, then submit the quote for Approval",
+            "data": "-",
+            "result": "Quote is submitted for approval"
+          },
+          {
+            "action": "Navigate to Amendment Opportunity from quote page and verify final values",
+            "data": "-",
+            "result": "Opportunity displays with Sub-Type Detail as Add-On Membership and Bookings Total USD 7,020.00"
+          }
+        ]
+      }
+    },
+    {
+      "id": "MIG-5",
+      "batch_id": "BATCH-2",
+      "feature_path": "packages/cucumber-tests/src/features/GCRM/Amendment.feature",
+      "scenario": "GCRM: Add-On Membership Amendment for Chronic Condition Management Plus",
+      "decision": "Defer",
+      "drop_reason": "Scenario marked as @draft in source. Similar complexity to MIG-4 but requires additional product configuration validation.",
+      "automation_status": "Not yet automated",
+      "playwright": null
+    },
+    {
+      "id": "MIG-6",
+      "batch_id": "BATCH-2",
+      "feature_path": "packages/cucumber-tests/src/features/GCRM/Amendment.feature",
+      "scenario": "GCRM: Add-On Membership Amendment for TeleMedicine",
+      "decision": "Defer",
+      "drop_reason": "Scenario marked as @bug in source. Known defect prevents reliable automation until bug is resolved.",
+      "automation_status": "Not yet automated",
+      "playwright": null
+    },
+    {
+      "id": "MIG-7",
+      "batch_id": "BATCH-2",
+      "feature_path": "packages/cucumber-tests/src/features/GCRM/Amendment.feature",
+      "scenario": "GCRM: Upgrade with Price Increase Amendment (CCM Standalone to Super Bundle)",
+      "decision": "Defer",
+      "drop_reason": "Scenario marked as @draft in source. Extremely complex with 40 steps involving nested bundle management, multiple product line edits, and intricate Net ARR calculations across bundle hierarchies. Requires stable bundle configuration and UI workflows before automation.",
+      "automation_status": "Not yet automated",
+      "playwright": null
+    },
+    {
+      "id": "MIG-8",
+      "batch_id": "BATCH-2",
+      "feature_path": "packages/cucumber-tests/src/features/GCRM/Amendment.feature",
+      "scenario": "GCRM: UpSell to HTN",
+      "decision": "Defer",
+      "drop_reason": "Scenario marked as @draft in source. Upsell amendment flow requires stable requirements and UI workflows before automation.",
+      "automation_status": "Not yet automated",
+      "playwright": null
     }
   ]
 }
