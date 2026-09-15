@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeSubmitPrompt": [
+      {
+        "command": "npx tsx src/observability/before-submit-prompt.ts"
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": "npx tsx src/observability/before-shell-execution.ts",
+        "failClosed": true
+      }
+    ],
+    "afterShellExecution": [
+      {
+        "command": "npx tsx src/observability/after-shell-execution.ts"
+      }
+    ],
+    "afterFileEdit": [
+      {
+        "command": "npx tsx src/observability/after-file-edit.ts",
+        "failClosed": true
+      }
+    ],
+    "stop": [
+      {
+        "command": "npx tsx src/observability/stop.ts",
+        "failClosed": true
+      }
+    ],
+    "afterAgentResponse": [
+      {
+        "command": "npx tsx src/observability/after-agent-response.ts"
+      }
+    ]
+  }
+}

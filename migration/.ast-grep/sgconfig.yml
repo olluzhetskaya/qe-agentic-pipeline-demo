@@ -1,0 +1,8 @@
+ruleDirs:
+  - rules
+
+# Enforced rules:
+# - no-page-in-spec: Direct page fixture usage in specs
+# - no-boolean-literal-assertion: expect(bool).toBe(true) anti-pattern
+# - no-boolean-method-in-pom: POM methods returning boolean for assertions
+# - no-pom-page-property-in-spec: Accessing .page property through POMs

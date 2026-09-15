@@ -1,0 +1,54 @@
+# Static CI for the two pipelines in this repo.
+# ADR-014: npm run validate:push
+# ADR-015: npm run gate:migration plus lint on migrated TypeScript
+#
+# Playwright is not a CI step yet. There is no live SUT in this lab, and
+# src/tests/ plus migration/tests/ ship no runnable specs. Three consecutive
+# browser runs, a runtime budget, and a coverage delta stay out of scope
+# (ADR-016).
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  HUSKY: '0'
+
+jobs:
+  qe-pipeline:
+    name: ADR-014 static gates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run validate:push
+
+  migrate-pipeline:
+    name: ADR-015 static gates
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: migration
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: migration/package-lock.json
+      - run: npm ci
+      - run: npm run validate
