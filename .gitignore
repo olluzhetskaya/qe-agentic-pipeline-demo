@@ -7,6 +7,10 @@ review-ui/public/review-data.json
 src/tests/tenant-onboarding-generated.spec.ts
 data/verdicts/*.json
 data/xray-index.json
+migration/sut/**
+!migration/sut/
+!migration/sut/README.md
+.cursor/mcp.json
 .cursor/gate-status.json
 *.tsbuildinfo
 .env
